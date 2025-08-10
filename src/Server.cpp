@@ -52,6 +52,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
             // If a matching char was not found after iterating through our pattern on a input char, that means the input char is not in our pattern and is a negative character.
             if (!foundMatchingChar && negativeCharGroup)
             {
+                std::cout << "Returning true here\n";
                 return true;
             }
             foundMatchingChar = false;
