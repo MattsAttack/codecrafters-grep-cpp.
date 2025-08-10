@@ -7,7 +7,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     {
         return input_line.find(pattern) != std::string::npos; // npos is the return value of find commands if they fail
     }
-    else if (pattern == "\\n")
+    else if (pattern == "\\d")
     {
         return input_line.find_first_not_of("0123456789") != std::string::npos; // Have this find a number
     }
