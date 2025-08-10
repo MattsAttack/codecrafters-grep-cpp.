@@ -24,6 +24,22 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
         }
         return false;
     }
+    else if (pattern.at(0) == '[' && pattern.back() == ']')
+    {
+        // Check if each char in pattern is in the input string
+        for (int patternIndex = 1; patternIndex < pattern.size() - 1; patternIndex++) // Start at 1 and end early by 1 to account for brackets
+        {
+            // Iterate through input string
+            for (char c : input_line)
+            {
+                if (c == pattern.at(patternIndex))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     else
     {
         throw std::runtime_error("Unhandled pattern " + pattern);
