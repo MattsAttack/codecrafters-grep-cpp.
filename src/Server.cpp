@@ -31,23 +31,31 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
 
         // If using a negative char group, start at index 2 to account for ^
         int patternStartIndex = (negativeCharGroup) ? 2 : 1;
-
+        std::string checkPatternChars;
         // Iterate through input string
         for (char c : input_line)
         {
             // Start at 1 and end early by 1 to account for brackets
-
+            checkPatternChars = "";
             for (int patternIndex = patternStartIndex; patternIndex < pattern.size() - 1; patternIndex++)
             {
-                // Check if each char in pattern is in the input string
-                if (c == pattern.at(patternIndex))
+                // if char has not already been checked for match, add char to str and check it
+                std::cout << "checkPatternChars pre:  " << checkPatternChars << "\n";
+                if (checkPatternChars.find(pattern.at(patternIndex)) == std::string::npos)
                 {
-                    if (!negativeCharGroup)
+                    // Append single unique character from pattern
+                    checkPatternChars.push_back(pattern.at(patternIndex));
+                    // Check if each char in pattern is in the input string
+                    if (c == pattern.at(patternIndex))
                     {
-                        return false;
+                        if (!negativeCharGroup)
+                        {
+                            return true;
+                        }
+                        foundMatchingChar = true;
                     }
-                    foundMatchingChar = true;
                 }
+                std::cout << "checkPatternChars post:  " << checkPatternChars << "\n";
             }
             // If a matching char was not found after iterating through our pattern on a input char, that means the input char is not in our pattern and is a negative character.
             if (!foundMatchingChar && negativeCharGroup)
@@ -57,12 +65,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
             }
             foundMatchingChar = false;
         }
-
-        /*
-We should only return true if we check all chars in negative pattern and this current input char is not there
-Refactor code to loop through input string first, and then look at pattern
-Then we can set a variable in the current pos checker to false and check for that value to see if we the input char is one we don't have
-*/
+        return false;
     }
     else
     {
