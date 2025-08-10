@@ -29,10 +29,15 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
         bool negativeCharGroup = (pattern.at(1) == '^'); // Check for negative char group
         bool foundMatchingChar = false;
 
+        // If using a negative char group, start at index 2 to account for ^
+        int patternStartIndex = (negativeCharGroup) ? 2 : 1;
+
         // Iterate through input string
         for (char c : input_line)
         {
-            for (int patternIndex = 1; patternIndex < pattern.size() - 1; patternIndex++) // Start at 1 and end early by 1 to account for brackets
+            // Start at 1 and end early by 1 to account for brackets
+
+            for (int patternIndex = patternStartIndex; patternIndex < pattern.size() - 1; patternIndex++)
             {
                 // Check if each char in pattern is in the input string
                 if (c == pattern.at(patternIndex))
@@ -52,11 +57,11 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
             foundMatchingChar = false;
         }
 
-                /*
-        We should only return true if we check all chars in negative pattern and this current input char is not there
-        Refactor code to loop through input string first, and then look at pattern
-        Then we can set a variable in the current pos checker to false and check for that value to see if we the input char is one we don't have
-        */
+        /*
+We should only return true if we check all chars in negative pattern and this current input char is not there
+Refactor code to loop through input string first, and then look at pattern
+Then we can set a variable in the current pos checker to false and check for that value to see if we the input char is one we don't have
+*/
     }
     else
     {
