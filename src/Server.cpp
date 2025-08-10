@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cctype> // For isalnum()
 
 bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
@@ -11,10 +12,26 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     {
         return input_line.find_first_of("0123456789") != std::string::npos; // Have this find a number
     }
+    else if (pattern == "\\w")
+    {
+        // Need to verify char value is between 48-57 65-90 95 97-122
+        for (char c : input_line)
+        {
+            if (std::isalnum(c) || c == '_')
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     else
     {
         throw std::runtime_error("Unhandled pattern " + pattern);
     }
+}
+
+bool check_str_for_values(std::string inputString, std::vector<int>)
+{
 }
 
 int main(int argc, char *argv[])
