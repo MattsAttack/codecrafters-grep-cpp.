@@ -30,10 +30,6 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     }
 }
 
-bool check_str_for_values(std::string inputString, std::vector<int>)
-{
-}
-
 int main(int argc, char *argv[])
 {
     // Flush after every std::cout / std::cerr
