@@ -26,19 +26,37 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
     }
     else if (pattern.at(0) == '[' && pattern.back() == ']')
     {
-        // Check if each char in pattern is in the input string
-        for (int patternIndex = 1; patternIndex < pattern.size() - 1; patternIndex++) // Start at 1 and end early by 1 to account for brackets
+        bool negativeCharGroup = (pattern.at(1) == '^'); // Check for negative char group
+        bool foundMatchingChar = false;
+
+        // Iterate through input string
+        for (char c : input_line)
         {
-            // Iterate through input string
-            for (char c : input_line)
+            for (int patternIndex = 1; patternIndex < pattern.size() - 1; patternIndex++) // Start at 1 and end early by 1 to account for brackets
             {
+                // Check if each char in pattern is in the input string
                 if (c == pattern.at(patternIndex))
                 {
-                    return true;
+                    if (!negativeCharGroup)
+                    {
+                        return false;
+                    }
+                    foundMatchingChar = true;
                 }
             }
+            // If a matching char was not found after iterating through our pattern on a input char, that means the input char is not in our pattern and is a negative character.
+            if (!foundMatchingChar && negativeCharGroup)
+            {
+                return true;
+            }
+            foundMatchingChar = false;
         }
-        return false;
+
+                /*
+        We should only return true if we check all chars in negative pattern and this current input char is not there
+        Refactor code to loop through input string first, and then look at pattern
+        Then we can set a variable in the current pos checker to false and check for that value to see if we the input char is one we don't have
+        */
     }
     else
     {
