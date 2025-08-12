@@ -32,19 +32,22 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
         // If using a negative char group, start at index 2 to account for ^
         int patternStartIndex = (negativeCharGroup) ? 2 : 1;
         std::string checkPatternChars;
+
         // Iterate through input string
         for (char c : input_line)
         {
-            // Start at 1 and end early by 1 to account for brackets
+            // Reset value of checkPatternChars for every char in input
             checkPatternChars = "";
+
+            // Start at 1 and end early by 1 to account for brackets
             for (int patternIndex = patternStartIndex; patternIndex < pattern.size() - 1; patternIndex++)
             {
                 // if char has not already been checked for match, add char to str and check it
-                std::cout << "checkPatternChars pre:  " << checkPatternChars << "\n";
                 if (checkPatternChars.find(pattern.at(patternIndex)) == std::string::npos)
                 {
                     // Append single unique character from pattern
                     checkPatternChars.push_back(pattern.at(patternIndex));
+
                     // Check if each char in pattern is in the input string
                     if (c == pattern.at(patternIndex))
                     {
@@ -55,12 +58,11 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
                         foundMatchingChar = true;
                     }
                 }
-                std::cout << "checkPatternChars post:  " << checkPatternChars << "\n";
             }
+
             // If a matching char was not found after iterating through our pattern on a input char, that means the input char is not in our pattern and is a negative character.
             if (!foundMatchingChar && negativeCharGroup)
             {
-                std::cout << "Returning true here\n";
                 return true;
             }
             foundMatchingChar = false;
