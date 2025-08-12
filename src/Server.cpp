@@ -2,6 +2,52 @@
 #include <string>
 #include <cctype> // For isalnum()
 
+/*
+
+My current algorithm only handles one regex char and checks entire input for it
+Refactor to check each char for this pattern
+
+*/
+
+/*
+
+// Loops through every char in input_line from top level
+bool regex(const std::string &input_line, const std::string &pattern)
+{
+    for (int absIndex = 0; absIndex < input_line.size(); absIndex++)
+    {
+        for (int relIndex = absIndex, regexIndex = 0; relIndex <= input_line.size(); relIndex++, regexIndex++)
+        {
+            // If we reach the end of the regex string and haven't broke, match found.
+            if(regexIndex == pattern.size())
+            {
+                return true;
+            }
+            if(input_line[relIndex == pattern[relIndex]])
+            {
+                continue;
+            }
+            else
+            {
+                break; // Start next absIndex Loop. Verify this
+            }
+        }
+    }
+    return false;
+}
+
+
+
+for (char c: input_line)
+{
+    if(char c = regex[0])
+    {
+
+    }
+}
+
+*/
+
 bool match_pattern(const std::string &input_line, const std::string &pattern)
 {
     if (pattern.length() == 1)
@@ -106,6 +152,7 @@ int main(int argc, char *argv[])
 
     try
     {
+
         if (match_pattern(input_line, pattern))
         {
             return 0;
