@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cctype> // For isalnum()
+#include <vector>
 
 /*
 
@@ -11,19 +12,21 @@ Refactor to check each char for this pattern
 
 /*
 
+Need to return true if we reach the end of regex
+
+
 // Loops through every char in input_line from top level
 bool regex(const std::string &input_line, const std::string &pattern)
 {
+    std::vector<string> patternVector = separate_pattern(patternVector, pattern);
     for (int absIndex = 0; absIndex < input_line.size(); absIndex++)
     {
-        for (int relIndex = absIndex, regexIndex = 0; relIndex <= input_line.size(); relIndex++, regexIndex++)
+        for (int relIndex = 0; relIndex <= pattern.size(); relIndex++)
         {
             // If we reach the end of the regex string and haven't broke, match found.
-            if(regexIndex == pattern.size())
-            {
-                return true;
-            }
-            if(input_line[relIndex == pattern[relIndex]])
+            if (relIndex == pattern.size()) return true; // TODO implement a better method for this
+
+            if(input_line[relIndex] == pattern[relIndex]])
             {
                 continue;
             }
@@ -36,41 +39,81 @@ bool regex(const std::string &input_line, const std::string &pattern)
     return false;
 }
 
-
-
-for (char c: input_line)
+void separate_pattern(std::vector<string> &patternVector,std::string &pattern) // Reimplement with pointer for memory efficiency (dont copy over a string). Can't do reference cause we're editing values
 {
-    if(char c = regex[0])
+    std::vector<string> patternVector;
+    for(int i = 0; i < pattern.size(); i++)
     {
-
+        // Account for certain character classes
+        if(pattern[i] == "\\")
+        {
+            patternVector.add(pattern[i:i+1]);
+            i++;
+        }
+        else if(pattern[i] == "[")
+        {
+            do{
+            patternVector.add(pattern[i]);
+            i++;
+            }while(pattern[i] != "]") // Could be simplified with find index to allow turn into one liner
+        }
+        else
+        {
+            patternVector.add(pattern[i]);
+        }
     }
 }
 
+// Takes in a patternChar. Do this to allow for \*
+bool match_pattern(const char c, const std::string patternChar)
+{
+    // Same code as before but with simplified checkers. No need to loop through things anymore
+}
 */
 
-bool match_pattern(const std::string &input_line, const std::string &pattern)
+// Loops through every char in input_line from top level
+
+void separate_pattern(std::vector<std::string> &patternVector, const std::string &pattern)
 {
+    for (int i = 0; i < pattern.size(); i++)
+    {
+        // Account for certain character classes
+        if (pattern[i] == '\\')
+        {
+            patternVector.push_back(pattern.substr(i, 2));
+            i++;
+        }
+        else if (pattern[i] == '[')
+        {
+            // Calculate bracketLength by finding index of back bracket and subtracting by current index. May cause off by one error
+            int bracketLength = pattern.find(']', i) - i + 1;
+            std::cout << pattern.substr(i, bracketLength);
+            patternVector.push_back(pattern.substr(i, bracketLength));
+            i += bracketLength;
+        }
+        else
+        {
+            patternVector.push_back(pattern.substr(i, 1)); // Need to use substr
+        }
+    }
+}
+
+bool match_pattern(const std::string c, const std::string pattern)
+{
+    // If only 1 char, see if values align
     if (pattern.length() == 1)
     {
-        return input_line.find(pattern) != std::string::npos; // npos is the return value of find commands if they fail
+        return c == pattern;
     }
     else if (pattern == "\\d")
     {
-        return input_line.find_first_of("0123456789") != std::string::npos; // Have this find a number
+        return c.find_first_of("0123456789") != std::string::npos; // npos is value returned if no matching index is found
     }
     else if (pattern == "\\w")
     {
-        // Need to verify char value is between 48-57 65-90 95 97-122
-        for (char c : input_line)
-        {
-            if (std::isalnum(c) || c == '_')
-            {
-                return true;
-            }
-        }
-        return false;
+        return (std::isalnum(c[0]) || c[0] == '_');
     }
-    else if (pattern.at(0) == '[' && pattern.back() == ']')
+    else if (pattern.at(0) == '[' && pattern.back() == ']') // TODO rewrite to be efficient with one char
     {
         bool negativeCharGroup = (pattern.at(1) == '^'); // Check for negative char group
         bool foundMatchingChar = false;
@@ -80,7 +123,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
         std::string checkPatternChars;
 
         // Iterate through input string
-        for (char c : input_line)
+        for (char val : c)
         {
             // Reset value of checkPatternChars for every char in input
             checkPatternChars = "";
@@ -95,7 +138,7 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
                     checkPatternChars.push_back(pattern.at(patternIndex));
 
                     // Check if each char in pattern is in the input string
-                    if (c == pattern.at(patternIndex))
+                    if (val == pattern.at(patternIndex))
                     {
                         if (!negativeCharGroup)
                         {
@@ -120,7 +163,35 @@ bool match_pattern(const std::string &input_line, const std::string &pattern)
         throw std::runtime_error("Unhandled pattern " + pattern);
     }
 }
+// TODO update with function headers
+bool regex(const std::string &input_line, const std::string &pattern)
+{
+    std::vector<std::string> patternVector;
+    separate_pattern(patternVector, pattern);
+    for (std::string pattern : patternVector)
+    {
+        std::cout << pattern << "\n";
+    }
+    for (int absIndex = 0; absIndex < input_line.size(); absIndex++)
+    {
+        for (int relIndex = 0; relIndex <= patternVector.size(); relIndex++)
+        {
+            // If we reach the end of the regex string and haven't broke, match found.
+            if (relIndex == patternVector.size())
+                return true; // TODO implement a better method for this
 
+            if (match_pattern(input_line.substr(relIndex + absIndex, 1), patternVector.at(relIndex)))
+            {
+                continue;
+            }
+            else
+            {
+                break; // Start next absIndex Loop. Verify this
+            }
+        }
+    }
+    return false;
+}
 int main(int argc, char *argv[])
 {
     // Flush after every std::cout / std::cerr
@@ -153,7 +224,7 @@ int main(int argc, char *argv[])
     try
     {
 
-        if (match_pattern(input_line, pattern))
+        if (regex(input_line, pattern))
         {
             return 0;
         }
